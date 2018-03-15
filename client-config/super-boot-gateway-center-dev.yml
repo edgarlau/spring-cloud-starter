@@ -59,9 +59,9 @@ eureka:
 #Twitter_Snowflake 序列号生成器配置
 Snowflake:
   #工作中心ID 0-31
-  workerId: 0
+  workerId:  0
   #数据中心ID(0~31)
-  datacenterId: 0
+  datacenterId:  0
 
 #配置服务超时时间默认为60秒
 hystrix:
