@@ -5,7 +5,7 @@ server:
 #定义环境引用的配置文件
 spring:
   application:
-    name: super-boot-operation-center
+    name: super-boot-monitor-center
     index: ${random.int}
   http:
     encoding:
