@@ -1,7 +1,7 @@
 #web容器配置
 server:
   context-path: /
-  port: 4444
+  port: 6666
 #启用调试模式
 debug: true
 #日志配置
@@ -10,7 +10,7 @@ logging:
 #spring配置
 spring:
   application:
-    name: super-boot-user-center
+    name: super-boot-logger-center
     index: ${random.int}
   #使用@Aspect注解将一个java类定义为切面类
   #使用@Pointcut定义一个切入点，可以是一个规则表达式，比如下例中某个package下的所有函数，也可以是一个注解等。
