@@ -57,11 +57,11 @@ eureka:
     lease-expiration-duration-in-seconds: 30
     appname: 网关中心
 #Twitter_Snowflake 序列号生成器配置
-#Snowflake:
-#  #工作中心ID 0-31
-#  workerId:  0
-#  #数据中心ID(0~31)
-#  datacenterId:  0
+Snowflake:
+  #工作中心ID 0-31
+  workerId:  0
+  #数据中心ID(0~31)
+  datacenterId:  0
 
 #配置服务超时时间默认为60秒
 hystrix:
