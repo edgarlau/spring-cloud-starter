@@ -1,7 +1,7 @@
 #web容器配置
 server:
   context-path: /
-  port: 2222
+  port: 4444
 #启用调试模式
 debug: true
 #日志配置
