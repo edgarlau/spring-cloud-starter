@@ -1,15 +1,48 @@
 #web容器配置
 server:
   context-path: /
-  port: 6666
-#定义环境引用的配置文件
+  port: 4444
+#启用调试模式
+debug: true
+#日志配置
+logging:
+  config: classpath:log4j2-dev.xml
+#spring配置
 spring:
   application:
-    name: super-boot-logger-center
+    name: super-boot-user-center
     index: ${random.int}
-datasource:
+  #使用@Aspect注解将一个java类定义为切面类
+  #使用@Pointcut定义一个切入点，可以是一个规则表达式，比如下例中某个package下的所有函数，也可以是一个注解等。
+  #根据需要在切入点不同位置的切入内容
+  #使用@Before在切入点开始处切入内容
+  #使用@After在切入点结尾处切入内容
+  #使用@AfterReturning在切入点return内容之后切入内容（可以用来对处理返回值做一些加工处理）
+  #使用@Around在切入点前后切入内容，并自己控制何时执行切入点自身的内容
+  #使用@AfterThrowing用来处理当切入内容部分抛出异常之后的处理逻辑
+  #使用CGLIB来实现AOP，false是标准Java的实现
+  aop:
+    proxy-target-class: true
+  http:
+    encoding:
+      force: true
+      charset: UTF-8
+    multipart:
+      enabled: true
+      max-file-size: 1024MB
+  #热加载配置
+  devtools:
+    remote:
+      secret: thisismysecret
+  jpa:
+     properties:
+        hibernate:
+          show_sql: true
+          format_sql: true
+  #数据库连接配置
+  datasource:
     base:
-      name: baseDB
+      name: baseDataSource
       type: com.alibaba.druid.pool.DruidDataSource
       driver-class-name: com.mysql.jdbc.Driver
       url: jdbc:mysql://localhost:3306/super_boot_base?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&remarks=true&useInformationSchema=true
@@ -18,7 +51,7 @@ datasource:
       #初始化大小
       initial-size: 5
       min-idle: 5
-      max-active: 20
+      max-active: 50
       # 配置获取连接等待超时的时间
       max-wait: 60000
       # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
@@ -42,7 +75,7 @@ datasource:
       useGlobalDataSourceStat: true
 
     business:
-      name: businessDB
+      name: businessDataSource
       type: com.alibaba.druid.pool.DruidDataSource
       driver-class-name: com.mysql.jdbc.Driver
       url: jdbc:mysql://localhost:3306/super_boot_user?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&remarks=true&useInformationSchema=true
@@ -51,7 +84,7 @@ datasource:
       #初始化大小
       initial-size: 5
       min-idle: 5
-      max-active: 20
+      max-active: 50
       # 配置获取连接等待超时的时间
       max-wait: 60000
       # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
@@ -106,33 +139,6 @@ datasource:
         allow: 127.0.0.1,192.168.30.50
         #IP黑名单 (存在共同时，deny优先于allow)
         deny: 192.168.1.102
-  http:
-    encoding:
-      force: true
-      charset: UTF-8
-    multipart:
-      enabled: true
-      max-file-size: 1024MB
-  #热加载配置
-  devtools:
-    remote:
-      secret: thisismysecret
-  cloud:
-    #启用消息追踪
-    bus:
-      trace:
-        enabled: true
-  boot:
-    admin:
-      routes:
-        endpoints: env,metrics,dump,jolokia,info,configprops,trace,logfile,refresh,flyway,liquibase,heapdump,loggers,auditevents,hystrix.stream
-  #配置消息总线
-  rabbitmq:
-    host: localhost
-    port: 5672
-    username: admin
-    password: admin
-
   redis:
     cluster:
       nodes: 127.0.0.1:7000, 127.0.0.1:7001,127.0.0.1:7002,127.0.0.1:7003,127.0.0.1:7004,127.0.0.1:7005
@@ -143,26 +149,47 @@ datasource:
         min-idle: 5
       cache-expire: 1800
       timeout: 10000
-#启用安全配置
-security:
-  basic:
-    enabled: true
-  user:
-    name: superboot #用户名
-    password: superboot #密码
+  mvc:
+    throw-exception-if-no-handler-found: true
+  cloud:
+    #启用消息追踪
+    bus:
+      trace:
+        enabled: true
+  #配置消息总线
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: admin
+    password: admin
 #关闭安全认证
 management:
   security:
     enabled: false
-#启用调试模式
-debug: true
-#日志配置
-logging:
-  config: classpath:log4j2-dev.xml
+#Twitter_Snowflake 序列号生成器配置
+Snowflake:
+  #工作中心ID 0-31
+  workerId: 0
+  #数据中心ID(0~31)
+  datacenterId: 0
+
+#启用服务容错保护
+feign:
+  hystrix:
+    enabled: true
+#配置注册中心信息
 eureka:
   instance:
     #心跳时间间隔
     lease-renewal-interval-in-seconds: 10
     #无心跳多久后,该服务失效
     lease-expiration-duration-in-seconds: 30
-    appname: 日志中心
+    appname: 用户中心
+#该配置是让Hystrix的超时时间改为30秒
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 30000
